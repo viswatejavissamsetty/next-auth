@@ -1,41 +1,57 @@
 import Link from "next/link";
+import { signIn, signOut, useSession } from 'next-auth/react';
 
-
-function Navbar(){
+function Navbar() {
+    const { data, status } = useSession();
+    // console.log({ data, status });
     return (
         <nav className="header">
             <h1 className="logo">
                 <a href="#">NextAuth</a>
             </h1>
-            <ul className={`main-nav`}>
+            <ul className={`main-nav ${status === 'loading' ? 'loading' : 'loaded'}`}>
                 <li>
-                    <Link   href='/'>
+                    <Link href='/'>
                         <a>Home</a>
                     </Link>
                 </li>
                 <li>
-                    <Link  href='/dashboard'>
+                    <Link href='/dashboard'>
                         <a>Dashboard</a>
                     </Link>
                 </li>
                 <li>
-                    <Link  href='/blog'>
+                    <Link href='/blog'>
                         <a>Blog</a>
                     </Link>
                 </li>
-                <li>
-                    <Link  href='#'>
-                        <a>Sign In</a>
-                    </Link>
-                </li>
-                <li>
-                    <Link  href='#'>
-                        <a>Sing Out</a>
-                    </Link>
-                </li>
+                {
+                    status !== 'authenticated' &&
+                    <li>
+                        <Link href='/api/auth/signin'>
+                            <a onClick={e => {
+                                e.preventDefault();
+                                signIn('github');
+                            }}>Sign In</a>
+                        </Link>
+                    </li>
+                }
+
+                {
+                    status === 'authenticated' &&
+                    <li>
+                        <Link href='/api/auth/signout'>
+                            <a onClick={e => {
+                                e.preventDefault();
+                                signOut();
+                            }}>Sing Out</a>
+                        </Link>
+                    </li>
+                }
+
             </ul>
         </nav>
-    )   
+    )
 }
 
 export default Navbar;

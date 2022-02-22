@@ -1,7 +1,9 @@
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+  const { data, status } = useSession();
   return (
     <div className={styles.container}>
       <Head>
@@ -11,6 +13,8 @@ export default function Home() {
       </Head>
 
       <h1>Landing Page</h1>
+
+      <h1>Hi {data ? data.user.name : 'Admin'}</h1>
     </div>
   )
 }
